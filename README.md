@@ -65,11 +65,11 @@ To get started:
     }
     ```
 
-7.  Run `terraform init && terraform apply` at the top of the Hugo site
-    directory. This will provision the resources for your site.
-
-8.  Run `git init && git add . && git commit -m "first"` at the top of the Hugo
+7.  Run `git init && git add . && git commit -m "first"` at the top of the Hugo
     site directory. This creates your initial commit.
+
+8.  Run `terraform init && terraform apply` at the top of the Hugo site
+    directory. This will provision the resources for your site.
 
 9.  Run `git remote add origin $(terraform output origin_url)"` at the top of
     the Hugo site directory. This configures your local Git repository to push

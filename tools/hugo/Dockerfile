@@ -16,7 +16,7 @@
 
 FROM debian:stretch-slim
 
-ARG HUGO_VERSION=0.53
+ARG HUGO_VERSION=0.59.1
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \

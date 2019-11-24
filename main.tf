@@ -82,7 +82,7 @@ data "local_file" "hugo_dockerfile" {
 }
 
 locals {
-  hugo_image     = "gcr.io/${data.google_project.project.project_id}/hugo:0.53"
+  hugo_image     = "gcr.io/${data.google_project.project.project_id}/hugo:0.59.1"
   firebase_image = "gcr.io/${data.google_project.project.project_id}/firebase"
 }
 

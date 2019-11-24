@@ -14,6 +14,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-FROM node:boron
+FROM node:lts
 RUN npm install -g firebase-tools
 ENTRYPOINT ["/usr/local/bin/firebase"]

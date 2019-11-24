@@ -15,7 +15,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 terraform {
-  required_version = "~>0.11"
+  required_version = "~>0.12"
 }
 
 provider "local" {
@@ -23,56 +23,56 @@ provider "local" {
 }
 
 provider "null" {
-  version = "~>1.0"
+  version = "~>2.0"
 }
 
 data "google_project" "project" {
-  project_id = "${var.project}"
+  project_id = var.project
 }
 
 # Git repository
 
 resource "google_project_service" "sourcerepo" {
-  project            = "${data.google_project.project.project_id}"
+  project            = data.google_project.project.project_id
   service            = "sourcerepo.googleapis.com"
   disable_on_destroy = false
 }
 
 resource "google_sourcerepo_repository" "site" {
-  project = "${data.google_project.project.project_id}"
-  name    = "${var.repository_name}"
+  project = data.google_project.project.project_id
+  name    = var.repository_name
 
-  depends_on = ["google_project_service.sourcerepo"]
+  depends_on = [google_project_service.sourcerepo]
 }
 
 # Cloud Build
 
 resource "google_project_service" "cloudbuild" {
-  project            = "${data.google_project.project.project_id}"
+  project            = data.google_project.project.project_id
   service            = "cloudbuild.googleapis.com"
   disable_on_destroy = false
 }
 
 resource "google_project_service" "containerregistry" {
-  project            = "${data.google_project.project.project_id}"
+  project            = data.google_project.project.project_id
   service            = "containerregistry.googleapis.com"
   disable_on_destroy = false
 }
 
 resource "google_project_service" "cloudresourcemanager" {
-  project            = "${data.google_project.project.project_id}"
+  project            = data.google_project.project.project_id
   service            = "cloudresourcemanager.googleapis.com"
   disable_on_destroy = false
 }
 
 resource "google_project_service" "firebase" {
-  project            = "${data.google_project.project.project_id}"
+  project            = data.google_project.project.project_id
   service            = "firebase.googleapis.com"
   disable_on_destroy = false
 }
 
 resource "google_project_service" "firebasehosting" {
-  project            = "${data.google_project.project.project_id}"
+  project            = data.google_project.project.project_id
   service            = "firebasehosting.googleapis.com"
   disable_on_destroy = false
 }
@@ -88,13 +88,13 @@ locals {
 
 resource "null_resource" "hugo_docker_image" {
   depends_on = [
-    "google_project_service.cloudbuild",
-    "google_project_service.containerregistry",
+    google_project_service.cloudbuild,
+    google_project_service.containerregistry,
   ]
 
-  triggers {
-    project    = "${data.google_project.project.project_id}"
-    dockerfile = "${sha256("${data.local_file.hugo_dockerfile.content}")}"
+  triggers = {
+    project    = data.google_project.project.project_id
+    dockerfile = sha256(data.local_file.hugo_dockerfile.content)
   }
 
   provisioner "local-exec" {
@@ -109,13 +109,13 @@ data "local_file" "firebase_dockerfile" {
 
 resource "null_resource" "firebase_docker_image" {
   depends_on = [
-    "google_project_service.cloudbuild",
-    "google_project_service.containerregistry",
+    google_project_service.cloudbuild,
+    google_project_service.containerregistry,
   ]
 
-  triggers {
-    project    = "${data.google_project.project.project_id}"
-    dockerfile = "${sha256("${data.local_file.firebase_dockerfile.content}")}"
+  triggers = {
+    project    = data.google_project.project.project_id
+    dockerfile = sha256(data.local_file.firebase_dockerfile.content)
   }
 
   provisioner "local-exec" {
@@ -125,7 +125,7 @@ resource "null_resource" "firebase_docker_image" {
 }
 
 resource "google_project_iam_custom_role" "firebase_deploy" {
-  project     = "${data.google_project.project.project_id}"
+  project     = data.google_project.project.project_id
   role_id     = "firebaseHostingDeploy"
   title       = "Firebase Hosting Deploy"
   description = "Deployer to Firebase Hosting"
@@ -160,41 +160,41 @@ resource "google_project_iam_custom_role" "firebase_deploy" {
 }
 
 resource "google_project_iam_member" "cloudbuild_firebase_deploy" {
-  project = "${data.google_project.project.project_id}"
+  project = data.google_project.project.project_id
   role    = "projects/${google_project_iam_custom_role.firebase_deploy.project}/roles/${google_project_iam_custom_role.firebase_deploy.role_id}"
   member  = "serviceAccount:${data.google_project.project.number}@cloudbuild.gserviceaccount.com"
 }
 
 resource "google_cloudbuild_trigger" "deploy" {
-  project     = "${data.google_project.project.project_id}"
+  project     = data.google_project.project.project_id
   description = "Deploy to Firebase on push to master"
-  disabled    = "${!var.cloud_build_trigger}"
+  disabled    = false == var.cloud_build_trigger
 
   build {
     step {
-      name = "${local.hugo_image}"
+      name = local.hugo_image
       args = []
-      env  = "${formatlist("HUGO_%s", var.hugo_env)}"
+      env  = formatlist("HUGO_%s", var.hugo_env)
     }
 
     step {
-      name = "${local.firebase_image}"
+      name = local.firebase_image
       args = ["deploy"]
     }
   }
 
   trigger_template {
     branch_name = "master"
-    project_id  = "${google_sourcerepo_repository.site.project}"
-    repo_name   = "${google_sourcerepo_repository.site.name}"
+    project_id  = google_sourcerepo_repository.site.project
+    repo_name   = google_sourcerepo_repository.site.name
   }
 
   depends_on = [
-    "google_project_iam_member.cloudbuild_firebase_deploy",
-    "google_project_service.cloudbuild",
-    "google_project_service.firebase",
-    "google_project_service.firebasehosting",
-    "null_resource.firebase_docker_image",
-    "null_resource.hugo_docker_image",
+    google_project_iam_member.cloudbuild_firebase_deploy,
+    google_project_service.cloudbuild,
+    google_project_service.firebase,
+    google_project_service.firebasehosting,
+    null_resource.firebase_docker_image,
+    null_resource.hugo_docker_image,
   ]
 }

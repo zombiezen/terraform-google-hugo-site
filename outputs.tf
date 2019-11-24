@@ -15,17 +15,17 @@
 # SPDX-License-Identifier: Apache-2.0
 
 output "project" {
-  value       = "${data.google_project.project.project_id}"
+  value       = data.google_project.project.project_id
   description = "GCP/Firebase Project ID"
 }
 
 output "repository_project" {
-  value       = "${google_sourcerepo_repository.site.project}"
+  value       = google_sourcerepo_repository.site.project
   description = "Name of Google Source Repository to provision"
 }
 
 output "repository_name" {
-  value       = "${google_sourcerepo_repository.site.name}"
+  value       = google_sourcerepo_repository.site.name
   description = "Name of Google Source Repository to provision"
 }
 
@@ -35,11 +35,11 @@ output "repository_url" {
 }
 
 output "hugo_image" {
-  value       = "${local.hugo_image}"
+  value       = local.hugo_image
   description = "Hugo Docker image name"
 }
 
 output "firebase_image" {
-  value       = "${local.firebase_image}"
+  value       = local.firebase_image
   description = "Firebase Docker image name"
 }

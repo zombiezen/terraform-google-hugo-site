@@ -20,7 +20,7 @@ variable "project" {
 }
 
 variable "repository_name" {
-  type        = "string"
+  type        = string
   description = "Name of Google Source Repository to provision"
 }
 

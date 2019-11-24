@@ -48,6 +48,10 @@ To get started:
     site's directory name:
 
     ```terraform
+    terraform {
+      required_version = "~>0.12"
+    }
+
     provider "google" {
       version = "~>2.5"
       project = "PROJECTID"
@@ -61,7 +65,7 @@ To get started:
     }
 
     output "origin_url" {
-      value = "${module.hugo_site.repository_url}"
+      value = module.hugo_site.repository_url
     }
     ```
 

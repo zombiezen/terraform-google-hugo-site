@@ -14,9 +14,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-FROM debian:stretch-slim
+FROM debian:buster-slim
 
-ARG HUGO_VERSION=0.59.1
+ARG HUGO_VERSION=0.75.1
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \

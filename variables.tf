@@ -26,7 +26,7 @@ variable "repository_name" {
 
 variable "cloud_build_trigger" {
   default     = false
-  description = "If set to true, then run Cloud Build to deploy to Hugo on every commit to master."
+  description = "If set to true, then run Cloud Build to deploy to Hugo on every commit to main."
 }
 
 variable "hugo_env" {

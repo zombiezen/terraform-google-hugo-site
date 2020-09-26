@@ -81,7 +81,7 @@ To get started:
     steps in [Cloning Repositories][Cloud Source Repository cloning] to get your
     SSH key set up.
 
-10. Run `git push -u origin master` to deploy your website. Enjoy!
+10. Run `git push -u origin main` to deploy your website. Enjoy!
 
 You may also want to [connect a custom domain][].
 

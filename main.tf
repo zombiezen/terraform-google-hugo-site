@@ -173,7 +173,7 @@ resource "google_project_iam_member" "cloudbuild_firebase_deploy" {
 
 resource "google_cloudbuild_trigger" "deploy" {
   project     = data.google_project.project.project_id
-  description = "Deploy to Firebase on push to master"
+  description = "Deploy to Firebase on push to main"
   disabled    = false == var.cloud_build_trigger
 
   build {
@@ -190,7 +190,7 @@ resource "google_cloudbuild_trigger" "deploy" {
   }
 
   trigger_template {
-    branch_name = "^(master|main)$"
+    branch_name = "^(main|master)$"
     project_id  = google_sourcerepo_repository.site.project
     repo_name   = google_sourcerepo_repository.site.name
   }

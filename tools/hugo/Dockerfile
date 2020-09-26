@@ -16,6 +16,7 @@
 
 FROM debian:buster-slim
 
+# Also update the tag in main.tf.
 ARG HUGO_VERSION=0.75.1
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \

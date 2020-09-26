@@ -184,7 +184,7 @@ resource "google_cloudbuild_trigger" "deploy" {
   }
 
   trigger_template {
-    branch_name = "master"
+    branch_name = "^(master|main)$"
     project_id  = google_sourcerepo_repository.site.project
     repo_name   = google_sourcerepo_repository.site.name
   }

@@ -81,6 +81,12 @@ resource "google_project_service" "firebasehosting" {
   disable_on_destroy = false
 }
 
+resource "google_project_service" "iam" {
+  project            = data.google_project.project.project_id
+  service            = "iam.googleapis.com"
+  disable_on_destroy = false
+}
+
 data "local_file" "hugo_dockerfile" {
   filename = "${path.module}/tools/hugo/Dockerfile"
 }
@@ -160,6 +166,10 @@ resource "google_project_iam_custom_role" "firebase_deploy" {
     "serviceusage.quotas.get",
     "serviceusage.services.get",
     "serviceusage.services.list",
+  ]
+
+  depends_on = [
+    google_project_service.iam,
   ]
 }
 

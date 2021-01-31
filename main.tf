@@ -15,21 +15,19 @@
 # SPDX-License-Identifier: Apache-2.0
 
 terraform {
-  required_version = "~>0.13"
+  required_version = ">=0.13"
 
   required_providers {
+    local = {
+      version = "~>1.1"
+    }
+    null = {
+      version = "~>2.0"
+    }
     google = {
-      version = "~>3.40.0"
+      version = "~>3.40"
     }
   }
-}
-
-provider "local" {
-  version = "~>1.1"
-}
-
-provider "null" {
-  version = "~>2.0"
 }
 
 data "google_project" "project" {

@@ -49,16 +49,16 @@ To get started:
 
     ```terraform
     terraform {
-      required_version = "~>0.12"
+      required_version = ">=0.13"
     }
 
     provider "google" {
-      version = "~>2.5"
       project = "PROJECTID"
     }
 
     module "hugo_site" {
-      source = "zombiezen/hugo-site/google"
+      source  = "zombiezen/hugo-site/google"
+      version = "0.3.3"
 
       repository_name     = "NAME"
       cloud_build_trigger = true

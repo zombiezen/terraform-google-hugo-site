@@ -30,7 +30,7 @@ output "repository_name" {
 }
 
 output "deploy_trigger_id" {
-  value = google_cloudbuild_trigger.deploy.trigger_id
+  value       = google_cloudbuild_trigger.deploy.trigger_id
   description = "ID of the Cloud Build trigger"
 }
 

@@ -29,9 +29,19 @@ output "repository_name" {
   description = "Name of Google Source Repository to provision"
 }
 
-output "repository_url" {
+output "deploy_trigger_id" {
+  value = google_cloudbuild_trigger.deploy.trigger_id
+  description = "ID of the Cloud Build trigger"
+}
+
+output "ssh_repository_url" {
   value       = "ssh://source.developers.google.com:2022/p/${data.google_project.project.project_id}/r/${google_sourcerepo_repository.site.name}"
   description = "Git remote URL for the Google Source Repository. Does not include username, which should be your Google account email."
+}
+
+output "https_repository_url" {
+  value       = "https://source.developers.google.com/p/${data.google_project.project.project_id}/r/${google_sourcerepo_repository.site.name}"
+  description = "Git remote URL for the Google Source Repository that uses gcloud SDK or manually generated credentials."
 }
 
 output "hugo_image" {

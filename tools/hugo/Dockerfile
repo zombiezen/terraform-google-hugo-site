@@ -14,10 +14,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-FROM debian:buster-slim
+FROM debian:stretch-slim
 
-# Also update the tag in main.tf.
-ARG HUGO_VERSION=0.75.1
+ARG HUGO_VERSION
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
@@ -31,5 +30,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && apt-get autoremove -y \
   && rm -rf /var/lib/apt/lists/* /tmp/hugo.deb
 LABEL com.zombiezen.hugo_version=$HUGO_VERSION
+ARG SOURCE
+LABEL org.opencontainers.image.source=$SOURCE
 
 ENTRYPOINT ["/usr/local/bin/hugo"]

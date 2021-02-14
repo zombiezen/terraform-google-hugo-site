@@ -16,4 +16,6 @@
 
 FROM node:lts
 RUN npm install -g firebase-tools
+ARG SOURCE
+LABEL org.opencontainers.image.source=$SOURCE
 ENTRYPOINT ["/usr/local/bin/firebase"]

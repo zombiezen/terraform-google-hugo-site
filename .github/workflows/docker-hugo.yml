@@ -43,7 +43,8 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         file: ./tools/hugo/Dockerfile
-        tags: ghcr.io/${{ github.repository_owner }}/hugo:0.75.1
+        tags: ghcr.io/${{ github.repository_owner }}/hugo:0.80.0
         push: true
         build-args: |
-          HUGO_VERSION=0.75.1
+          HUGO_VERSION=0.80.0
+          SOURCE=https://github.com/${{ github.repository }}

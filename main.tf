@@ -18,12 +18,6 @@ terraform {
   required_version = ">=0.13"
 
   required_providers {
-    local = {
-      version = "~>1.1"
-    }
-    null = {
-      version = "~>2.0"
-    }
     google = {
       version = "~>3.40"
     }
@@ -57,12 +51,6 @@ resource "google_project_service" "cloudbuild" {
   disable_on_destroy = false
 }
 
-resource "google_project_service" "containerregistry" {
-  project            = data.google_project.project.project_id
-  service            = "containerregistry.googleapis.com"
-  disable_on_destroy = false
-}
-
 resource "google_project_service" "cloudresourcemanager" {
   project            = data.google_project.project.project_id
   service            = "cloudresourcemanager.googleapis.com"
@@ -87,51 +75,9 @@ resource "google_project_service" "iam" {
   disable_on_destroy = false
 }
 
-data "local_file" "hugo_dockerfile" {
-  filename = "${path.module}/tools/hugo/Dockerfile"
-}
-
 locals {
-  hugo_image     = "gcr.io/${data.google_project.project.project_id}/hugo:0.75.1"
-  firebase_image = "gcr.io/${data.google_project.project.project_id}/firebase"
-}
-
-resource "null_resource" "hugo_docker_image" {
-  depends_on = [
-    google_project_service.cloudbuild,
-    google_project_service.containerregistry,
-  ]
-
-  triggers = {
-    project    = data.google_project.project.project_id
-    dockerfile = sha256(data.local_file.hugo_dockerfile.content)
-  }
-
-  provisioner "local-exec" {
-    command     = "gcloud --project=${data.google_project.project.project_id} builds submit --tag=${local.hugo_image} ."
-    working_dir = "${path.module}/tools/hugo"
-  }
-}
-
-data "local_file" "firebase_dockerfile" {
-  filename = "${path.module}/tools/firebase/Dockerfile"
-}
-
-resource "null_resource" "firebase_docker_image" {
-  depends_on = [
-    google_project_service.cloudbuild,
-    google_project_service.containerregistry,
-  ]
-
-  triggers = {
-    project    = data.google_project.project.project_id
-    dockerfile = sha256(data.local_file.firebase_dockerfile.content)
-  }
-
-  provisioner "local-exec" {
-    command     = "gcloud --project=${data.google_project.project.project_id} builds submit --tag=${local.firebase_image} ."
-    working_dir = "${path.module}/tools/firebase"
-  }
+  hugo_image     = "ghcr.io/zombiezen/hugo:0.80.0"
+  firebase_image = "ghcr.io/zombiezen/firebase"
 }
 
 resource "google_project_iam_custom_role" "firebase_deploy" {
@@ -208,7 +154,5 @@ resource "google_cloudbuild_trigger" "deploy" {
     google_project_service.cloudbuild,
     google_project_service.firebase,
     google_project_service.firebasehosting,
-    null_resource.firebase_docker_image,
-    null_resource.hugo_docker_image,
   ]
 }

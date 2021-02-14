@@ -42,7 +42,7 @@ jobs:
     - name: Build image
       uses: docker/build-push-action@v2
       with:
-        file: ./hugo/Dockerfile
+        file: ./tools/hugo/Dockerfile
         tags: ghcr.io/zombiezen/hugo:0.75.1
         push: true
         build-args: |

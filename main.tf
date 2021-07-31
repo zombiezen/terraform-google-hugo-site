@@ -141,6 +141,8 @@ resource "google_cloudbuild_trigger" "deploy" {
       name = local.firebase_image
       args = ["deploy"]
     }
+
+    timeout = "${var.cloud_build_timeout_sec}s"
   }
 
   trigger_template {

@@ -29,6 +29,11 @@ variable "cloud_build_trigger" {
   description = "If set to true, then run Cloud Build to deploy to Hugo on every commit to main."
 }
 
+variable "cloud_build_timeout_sec" {
+  default     = 600
+  description = "Number of seconds before Cloud Build times out"
+}
+
 variable "hugo_env" {
   default     = []
   description = "List of environment variables to pass to Hugo during build without the `HUGO_` prefix."

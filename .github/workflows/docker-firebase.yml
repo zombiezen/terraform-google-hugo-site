@@ -23,6 +23,8 @@ on:
       - "tools/firebase/**"
       - ".github/workflows/docker-firebase.yml"
   workflow_dispatch:
+  schedule:
+    - cron: "15 23 2 * *"
 jobs:
   docker:
     name: Build

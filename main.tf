@@ -1,11 +1,11 @@
 # Copyright 2019 Ross Light
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 # http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -125,21 +125,51 @@ resource "google_project_iam_member" "cloudbuild_firebase_deploy" {
   member  = "serviceAccount:${data.google_project.project.number}@cloudbuild.gserviceaccount.com"
 }
 
+locals {
+  cloudbuild_steps = concat(
+    var.resources_bucket != "" ? [
+      {
+        name = "debian:stable-slim"
+        args = ["mkdir", "-p", "resources"]
+      },
+      {
+        name = "gcr.io/cloud-builders/gsutil"
+        args = ["-m", "rsync", "-r", "-d", "gs://${var.resources_bucket}/${var.resources_prefix}", "resources"]
+      },
+    ] : [],
+    [
+      {
+        name = local.hugo_image
+        args = []
+        env  = formatlist("HUGO_%s", var.hugo_env)
+      },
+      {
+        name = local.firebase_image
+        args = ["deploy"]
+      },
+    ],
+    var.resources_bucket != "" ? [
+      {
+        name = "gcr.io/cloud-builders/gsutil"
+        args = ["-m", "rsync", "-r", "-d", "resources", "gs://${var.resources_bucket}/${var.resources_prefix}"]
+      },
+    ] : [],
+  )
+}
+
 resource "google_cloudbuild_trigger" "deploy" {
   project     = data.google_project.project.project_id
   description = "Deploy to Firebase on push to main"
   disabled    = false == var.cloud_build_trigger
 
   build {
-    step {
-      name = local.hugo_image
-      args = []
-      env  = formatlist("HUGO_%s", var.hugo_env)
-    }
-
-    step {
-      name = local.firebase_image
-      args = ["deploy"]
+    dynamic "step" {
+      for_each = local.cloudbuild_steps
+      content {
+        name = step.value.name
+        args = lookup(step.value, "args", [])
+        env  = lookup(step.value, "env", [])
+      }
     }
 
     timeout = "${var.cloud_build_timeout_sec}s"

@@ -36,5 +36,6 @@ variable "cloud_build_timeout_sec" {
 
 variable "hugo_env" {
   default     = []
+  type        = list(string)
   description = "List of environment variables to pass to Hugo during build without the `HUGO_` prefix."
 }
